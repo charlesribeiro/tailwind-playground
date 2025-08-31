@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./src/output.css" rel="stylesheet">
+  <title>Theming Demo</title>
+</head>
+<body class="bg-surface text-on-surface font-sans transition-colors duration-300">
+  <div class="p-8 max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary">Advanced Theming</h1>
+    <p class="mt-4 text-secondary">
+      Switch between themes by changing the <code>data-theme</code> attribute on the root element.
+    </p>
+    <div class="mt-6 p-6 border border-border rounded-lg">
+      This container uses semantic colors that adapt to the current theme.
+    </div>
+    <div class="mt-8 flex gap-4">
+    <div class="mt-8 flex gap-4">
+<button id="light-btn"
+  class="px-4 py-2 bg-primary text-on-surface rounded-md ring-1 ring-border">
+  Light Theme
+</button>
+
+<button id="dark-btn"
+  class="px-4 py-2 bg-primary text-on-surface rounded-md ring-1 ring-border">
+  Dark Theme
+</button>
+
+<button id="contrast-btn"
+  class="px-4 py-2 bg-accent text-on-surface rounded-md ring-1 ring-border">
+  High Contrast
+</button>
+    </div>
+    </div>
+  </div>
+<script>
+  const lightBtn = document.getElementById('light-btn');
+  const darkBtn = document.getElementById('dark-btn');
+  const contrastBtn = document.getElementById('contrast-btn');
+
+  if (!lightBtn || !darkBtn || !contrastBtn) {
+    console.warn('Theme buttons not found in the DOM.');
+  } else {
+    lightBtn.addEventListener('click', (e) => {
+      console.log('Light clicked');
+      document.documentElement.setAttribute('data-theme', 'light');
+    });
+    darkBtn.addEventListener('click', () => {
+      console.log('Dark clicked');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    });
+    contrastBtn.addEventListener('click', () => {
+      console.log('High contrast clicked');
+      document.documentElement.setAttribute('data-theme', 'high-contrast');
+    });
+  }
+</script>
+</body>
+</html>
