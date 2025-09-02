@@ -1,60 +1,109 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="./src/output.css" rel="stylesheet">
-  <title>Theming Demo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Accessible Accordion (Tailwind + ARIA)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-surface text-on-surface font-sans transition-colors duration-300">
-  <div class="p-8 max-w-2xl mx-auto">
-    <h1 class="text-3xl font-bold text-primary">Advanced Theming</h1>
-    <p class="mt-4 text-secondary">
-      Switch between themes by changing the <code>data-theme</code> attribute on the root element.
-    </p>
-    <div class="mt-6 p-6 border border-border rounded-lg">
-      This container uses semantic colors that adapt to the current theme.
-    </div>
-    <div class="mt-8 flex gap-4">
-    <div class="mt-8 flex gap-4">
-<button id="light-btn"
-  class="px-4 py-2 bg-primary text-on-surface rounded-md ring-1 ring-border">
-  Light Theme
-</button>
+<body class="bg-gray-50 text-gray-900 font-sans p-8">
+  <h1 class="text-2xl font-bold mb-6">Accessible Accordion</h1>
 
-<button id="dark-btn"
-  class="px-4 py-2 bg-primary text-on-surface rounded-md ring-1 ring-border">
-  Dark Theme
-</button>
-
-<button id="contrast-btn"
-  class="px-4 py-2 bg-accent text-on-surface rounded-md ring-1 ring-border">
-  High Contrast
-</button>
+  <div class="w-full max-w-md mx-auto rounded-lg border border-gray-200 bg-white shadow">
+    <div class="border-b border-gray-200">
+      <button
+        type="button"
+        id="acc-btn-1"
+        aria-controls="acc-panel-1"
+        aria-expanded="true"
+        class="accordion-trigger peer group flex w-full items-center justify-between p-4 text-left font-medium text-gray-700 hover:bg-gray-50 aria-expanded:bg-gray-100 aria-expanded:text-blue-600"
+      >
+        <span>What is Tailwind CSS?</span>
+        <svg
+          class="h-5 w-5 shrink-0 transition-transform duration-200 group-aria-expanded:rotate-180"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div
+        id="acc-panel-1"
+        role="region"
+        aria-labelledby="acc-btn-1"
+        class="accordion-panel p-4 hidden peer-aria-expanded:block"
+      >
+        <p class="text-gray-600">
+          Tailwind CSS is a utility-first CSS framework for rapidly building custom user interfaces.
+        </p>
+      </div>
     </div>
+
+    <div>
+      <button
+        type="button"
+        id="acc-btn-2"
+        aria-controls="acc-panel-2"
+        aria-expanded="false"
+        class="accordion-trigger peer group flex w-full items-center justify-between p-4 text-left font-medium text-gray-700 hover:bg-gray-50 aria-expanded:bg-gray-100 aria-expanded:text-blue-600"
+      >
+        <span>How do ARIA variants work?</span>
+        <svg
+          class="h-5 w-5 shrink-0 transition-transform duration-200 group-aria-expanded:rotate-180"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div
+        id="acc-panel-2"
+        role="region"
+        aria-labelledby="acc-btn-2"
+        class="accordion-panel p-4 hidden peer-aria-expanded:block"
+      >
+        <p class="text-gray-600">
+          ARIA variants let you style based on ARIA state. Here, the panel displays when the
+          trigger’s <code>aria-expanded</code> is <code>true</code>.
+        </p>
+      </div>
     </div>
   </div>
-<script>
-  const lightBtn = document.getElementById('light-btn');
-  const darkBtn = document.getElementById('dark-btn');
-  const contrastBtn = document.getElementById('contrast-btn');
 
-  if (!lightBtn || !darkBtn || !contrastBtn) {
-    console.warn('Theme buttons not found in the DOM.');
-  } else {
-    lightBtn.addEventListener('click', (e) => {
-      console.log('Light clicked');
-      document.documentElement.setAttribute('data-theme', 'light');
+  <script>
+    const singleOpen = true;
+    const triggers = Array.from(document.querySelectorAll('.accordion-trigger'));
+
+    // The entire syncInitial function and its call are no longer needed,
+    // as CSS now handles the initial state based on the aria-expanded attribute.
+
+    function closeAll() {
+      triggers.forEach(btn => {
+        btn.setAttribute('aria-expanded', 'false');
+        // We no longer need to touch the panel's hidden attribute here.
+      });
+    }
+
+    triggers.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const wasExpanded = btn.getAttribute('aria-expanded') === 'true';
+
+        // If singleOpen is true, and we're about to open a new one, close all others first.
+        if (singleOpen && !wasExpanded) {
+          closeAll();
+        }
+
+        // Toggle the state of the clicked button.
+        btn.setAttribute('aria-expanded', String(!wasExpanded));
+        
+        // No need to manually toggle panel.hidden.
+        // Tailwind's `peer-aria-expanded:block` class handles this automatically.
+      });
     });
-    darkBtn.addEventListener('click', () => {
-      console.log('Dark clicked');
-      document.documentElement.setAttribute('data-theme', 'dark');
-    });
-    contrastBtn.addEventListener('click', () => {
-      console.log('High contrast clicked');
-      document.documentElement.setAttribute('data-theme', 'high-contrast');
-    });
-  }
-</script>
+  </script>
 </body>
 </html>
