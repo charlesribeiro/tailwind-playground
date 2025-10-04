@@ -8,14 +8,49 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   </head>
   <body class="flex h-screen items-center justify-center bg-gray-100">
-    <div x-data="{ message: 'Hello world!' }" class="p-8 bg-white rounded shadow text-center">
-      <h1 class="text-3xl font-bold text-blue-600 mb-4" x-text="message"></h1>
-      <button 
-        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-        @click="message = 'Hello from AlpineJS!'"
-      >
-        Change Message
-      </button>
+    <!-- Calculator container -->
+    <div 
+      x-data="{
+      display: '',
+      append(char) { this.display += char },
+      clear() { this.display = '' },
+      calculate() {
+        try {
+        this.display = eval(this.display).toString()
+        } catch {
+        this.display = 'Error'
+        }
+      }
+      }"
+      class="mt-10 mx-auto w-80 bg-white rounded-lg shadow-lg p-6"
+    >
+      <div class="mb-4">
+      <input 
+        type="text" 
+        x-model="display" 
+        class="w-full text-right text-2xl px-3 py-2 border rounded focus:outline-none"
+        readonly
+      />
+      </div>
+      <div class="grid grid-cols-4 gap-3">
+      <button @click="clear()" class="col-span-2 py-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">C</button>
+      <button @click="append('0')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">0</button>
+      <button @click="append('/')" class="py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold">/</button>
+      <button @click="append('7')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">7</button>
+      <button @click="append('8')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">8</button>
+      <button @click="append('9')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">9</button>
+      <button @click="append('*')" class="py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold">*</button>
+      <button @click="append('4')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">4</button>
+      <button @click="append('5')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">5</button>
+      <button @click="append('6')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">6</button>
+      <button @click="append('-')" class="py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold">-</button>
+      <button @click="append('1')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">1</button>
+      <button @click="append('2')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">2</button>
+      <button @click="append('3')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">3</button>
+      <button @click="append('+')" class="py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold">+</button>
+      <button @click="append('.')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">.</button>
+      <button @click="calculate()" class="col-span-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 font-semibold">=</button>
+      </div>
     </div>
   </body>
 </html>
