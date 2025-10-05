@@ -1,98 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Bar Chart</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multi-Chart Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
   <style type="text/tailwindcss">
     @theme {
-      --color-primary: #4f46e5;
-      --color-secondary: #10b981;
+      --color-primary: #4f46e5;   /* indigo-600 */
+      --color-secondary: #10b981; /* emerald-500 */
+      --color-accent: #f59e0b;    /* amber-500 */
     }
   </style>
 </head>
 <body class="bg-gray-100">
-
   <div class="container mx-auto p-8">
-    <div 
-      x-data="chartComponent()" 
-      x-init="initChart()" 
-      class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto"
-    >
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">Interactive Bar Chart</h2>
-      
-      <div class="relative h-96">
-        <canvas x-ref="canvas"></canvas>
+    <h1 class="text-3xl font-bold mb-6 text-gray-900">Company Dashboard</h1>
+
+    <!-- Time range selector -->
+    <div class="mb-6 max-w-xs" x-data>
+      <label for="timeRange" class="block text-sm font-medium text-gray-700">Time Range</label>
+      <select
+        x-model="$store.dashboard.timeRange"
+        id="timeRange"
+        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300
+               focus:outline-none focus:ring-indigo-500 focus:border-indigo-500
+               sm:text-sm rounded-md"
+      >
+        <option value="7d">Last 7 Days</option>
+        <option value="30d">Last 30 Days</option>
+      </select>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Sales (Bar) -->
+      <div
+        x-data="chartComponent({
+          type: 'bar',
+          label: 'Sales (USD)',
+          dataKey: 'salesData',
+          colorVar: '--color-primary'
+        })"
+        x-init="initChart()"
+        class="bg-white p-6 rounded-lg shadow-md"
+      >
+        <h3 class="text-lg font-medium text-gray-800">Sales</h3>
+        <div class="relative h-96 mt-4">
+          <canvas x-ref="canvas"></canvas>
+        </div>
       </div>
 
-      <div class="mt-6 flex space-x-2">
-        <button 
-          @click="updateData([12, 19, 8, 15, 22, 13])" 
-          class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-md hover:opacity-80 transition text-sm"
-        >
-          Q1/Q2 Data
-        </button>
-        <button 
-          @click="updateData([5, 25, 18, 10, 14, 20])" 
-          class="bg-[var(--color-secondary)] text-white px-4 py-2 rounded-md hover:opacity-80 transition text-sm"
-        >
-          Q3/Q4 Data
-        </button>
+      <!-- User Signups (Line) -->
+      <div
+        x-data="chartComponent({
+          type: 'line',
+          label: 'New Users',
+          dataKey: 'userData',
+          colorVar: '--color-secondary'
+        })"
+        x-init="initChart()"
+        class="bg-white p-6 rounded-lg shadow-md"
+      >
+        <h3 class="text-lg font-medium text-gray-800">User Signups</h3>
+        <div class="relative h-96 mt-4">
+          <canvas x-ref="canvas"></canvas>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const getThemeColor = (variableName) => {
-      return getComputedStyle(document.documentElement)
+    // Read a CSS custom property from the :root
+    const getThemeColor = (variableName) =>
+      getComputedStyle(document.documentElement)
         .getPropertyValue(variableName)
         .trim();
-    };
 
-    function chartComponent() {
-      return {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        salesData: [12, 19, 8, 15, 22, 13],
+    document.addEventListener('alpine:init', () => {
+      // Global store with labels and datasets for each range
+      Alpine.store('dashboard', {
+        timeRange: '7d',
+        labels: {
+          '7d':  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          '30d': ['W1', 'W2', 'W3', 'W4']
+        },
+        salesData: {
+          '7d':  [1200, 900, 1500, 1100, 1700, 800, 950],
+          '30d': [5200, 6100, 5800, 6400]
+        },
+        userData: {
+          '7d':  [45, 30, 60, 50, 75, 25, 40],
+          '30d': [180, 210, 195, 240]
+        }
+      });
+
+      // Reusable chart component for bar/line with live updates on range change
+      Alpine.data('chartComponent', (config) => ({
         chart: null,
 
         initChart() {
+          const store = Alpine.store('dashboard');
+          const labels = store.labels[store.timeRange];
+          const values = store[config.dataKey][store.timeRange];
+          const color = getThemeColor(config.colorVar);
+
+          const dataset =
+            config.type === 'line'
+              ? {
+                  label: config.label,
+                  data: values,
+                  borderColor: color,
+                  backgroundColor: color,
+                  borderWidth: 2,
+                  pointRadius: 3,
+                  tension: 0.3,
+                  fill: false
+                }
+              : {
+                  label: config.label,
+                  data: values,
+                  backgroundColor: color,
+                  borderColor: color,
+                  borderWidth: 1
+                };
+
           const ctx = this.$refs.canvas.getContext('2d');
           this.chart = new Chart(ctx, {
-            type: 'bar',
+            type: config.type,
             data: {
-              labels: this.labels,
-              datasets: [
-                {
-                  label: 'Monthly Sales',
-                  data: this.salesData,
-                  backgroundColor: getThemeColor('--color-primary'),
-                  borderColor: getThemeColor('--color-primary'),
-                  borderWidth: 1,
-                },
-              ],
+              labels,
+              datasets: [dataset]
             },
             options: {
               responsive: true,
               maintainAspectRatio: false,
-              scales: { y: { beginAtZero: true } },
-            },
+              scales: { y: { beginAtZero: true } }
+            }
           });
+
+          // React to timeRange changes
+          this.$watch('$store.dashboard.timeRange', () => this.refreshFromStore());
         },
 
-        updateData(newData) {
-          const color = newData.length > 6
-            ? getThemeColor('--color-secondary')
-            : getThemeColor('--color-primary');
-          this.chart.data.datasets[0].data = newData;
-          this.chart.data.datasets[0].backgroundColor = color;
-          this.chart.data.datasets[0].borderColor = color;
+        refreshFromStore() {
+          const store = Alpine.store('dashboard');
+          const labels = store.labels[store.timeRange];
+          const values = store[config.dataKey][store.timeRange];
+          const color = getThemeColor(config.colorVar);
+
+          this.chart.data.labels = labels;
+          this.chart.data.datasets[0].data = values;
+
+          // Keep colors in sync (useful if you swap dataset type or theme later)
+          if (this.chart.config.type === 'line') {
+            this.chart.data.datasets[0].borderColor = color;
+            this.chart.data.datasets[0].backgroundColor = color;
+          } else {
+            this.chart.data.datasets[0].borderColor = color;
+            this.chart.data.datasets[0].backgroundColor = color;
+          }
+
           this.chart.update();
-        },
-      };
-    }
+        }
+      }));
+    });
   </script>
 </body>
 </html>
