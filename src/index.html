@@ -3,60 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Static Bar Chart</title>
+  <title>Interactive Bar Chart</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
   <style type="text/tailwindcss">
     @theme {
       --color-primary: #4f46e5;
+      --color-secondary: #10b981;
     }
   </style>
 </head>
 <body class="bg-gray-100">
 
   <div class="container mx-auto p-8">
-    <div class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">Static Bar Chart</h2>
+    <div 
+      x-data="chartComponent()" 
+      x-init="initChart()" 
+      class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto"
+    >
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Interactive Bar Chart</h2>
+      
       <div class="relative h-96">
-        <canvas id="myBarChart"></canvas>
+        <canvas x-ref="canvas"></canvas>
+      </div>
+
+      <div class="mt-6 flex space-x-2">
+        <button 
+          @click="updateData([12, 19, 8, 15, 22, 13])" 
+          class="bg-[var(--color-primary)] text-white px-4 py-2 rounded-md hover:opacity-80 transition text-sm"
+        >
+          Q1/Q2 Data
+        </button>
+        <button 
+          @click="updateData([5, 25, 18, 10, 14, 20])" 
+          class="bg-[var(--color-secondary)] text-white px-4 py-2 rounded-md hover:opacity-80 transition text-sm"
+        >
+          Q3/Q4 Data
+        </button>
       </div>
     </div>
   </div>
 
   <script>
-    // Helper to get color from Tailwind theme
     const getThemeColor = (variableName) => {
       return getComputedStyle(document.documentElement)
         .getPropertyValue(variableName)
         .trim();
     };
 
-    const barChartCtx = document.getElementById('myBarChart');
+    function chartComponent() {
+      return {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        salesData: [12, 19, 8, 15, 22, 13],
+        chart: null,
 
-    new Chart(barChartCtx, {
-      type: 'bar',
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        datasets: [
-          {
-            label: 'Monthly Sales',
-            data: [12, 19, 8, 15, 22, 13],
-            backgroundColor: getThemeColor('--color-primary'),
-            borderColor: getThemeColor('--color-primary'),
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
+        initChart() {
+          const ctx = this.$refs.canvas.getContext('2d');
+          this.chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: this.labels,
+              datasets: [
+                {
+                  label: 'Monthly Sales',
+                  data: this.salesData,
+                  backgroundColor: getThemeColor('--color-primary'),
+                  borderColor: getThemeColor('--color-primary'),
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: { y: { beginAtZero: true } },
+            },
+          });
         },
-      },
-    });
+
+        updateData(newData) {
+          const color = newData.length > 6
+            ? getThemeColor('--color-secondary')
+            : getThemeColor('--color-primary');
+          this.chart.data.datasets[0].data = newData;
+          this.chart.data.datasets[0].backgroundColor = color;
+          this.chart.data.datasets[0].borderColor = color;
+          this.chart.update();
+        },
+      };
+    }
   </script>
 </body>
 </html>
