@@ -1,56 +1,114 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./output.css" rel="stylesheet">
-    <title>Tailwind + AlpineJS Hello World</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  </head>
-  <body class="flex h-screen items-center justify-center bg-gray-100">
-    <!-- Calculator container -->
-    <div 
-      x-data="{
-      display: '',
-      append(char) { this.display += char },
-      clear() { this.display = '' },
-      calculate() {
-        try {
-        this.display = eval(this.display).toString()
-        } catch {
-        this.display = 'Error'
-        }
-      }
-      }"
-      class="mt-10 mx-auto w-80 bg-white rounded-lg shadow-lg p-6"
-    >
-      <div class="mb-4">
-      <input 
-        type="text" 
-        x-model="display" 
-        class="w-full text-right text-2xl px-3 py-2 border rounded focus:outline-none"
-        readonly
-      />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsive Landing Page</title>
+
+  <!-- Tailwind CSS (Play CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine.js for lightweight interactivity -->
+  <script src="https://unpkg.com/alpinejs" defer></script>
+</head>
+
+<body class="antialiased text-gray-800">
+
+  <!-- Header -->
+  <header x-data="{ open: false }" class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="#" class="text-2xl font-bold text-blue-600">BrandName</a>
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex space-x-6">
+        <a href="#" class="text-gray-600 hover:text-blue-600">Home</a>
+        <a href="#" class="text-gray-600 hover:text-blue-600">About</a>
+        <a href="#" class="text-gray-600 hover:text-blue-600">Contact</a>
+      </nav>
+      <!-- Mobile Menu Button -->
+      <button @click="open = !open" class="md:hidden text-gray-600 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <nav x-show="open" class="md:hidden bg-white border-t border-gray-100">
+      <a href="#" class="block px-4 py-2 text-gray-600 hover:text-blue-600">Home</a>
+      <a href="#" class="block px-4 py-2 text-gray-600 hover:text-blue-600">About</a>
+      <a href="#" class="block px-4 py-2 text-gray-600 hover:text-blue-600">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-gray-50 py-12">
+    <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+      <!-- Text Content -->
+      <div class="md:w-1/2">
+        <h1 class="text-4xl font-bold mb-4">Welcome to Our Product</h1>
+        <p class="text-lg mb-6">A brief description or subtitle goes here to entice users.</p>
+        <a href="#"
+          class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          Get Started
+        </a>
       </div>
-      <div class="grid grid-cols-4 gap-3">
-      <button @click="clear()" class="col-span-2 py-2 bg-gray-200 rounded hover:bg-gray-300 font-semibold">C</button>
-      <button @click="append('0')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">0</button>
-      <button @click="append('/')" class="py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold">/</button>
-      <button @click="append('7')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">7</button>
-      <button @click="append('8')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">8</button>
-      <button @click="append('9')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">9</button>
-      <button @click="append('*')" class="py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold">*</button>
-      <button @click="append('4')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">4</button>
-      <button @click="append('5')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">5</button>
-      <button @click="append('6')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">6</button>
-      <button @click="append('-')" class="py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold">-</button>
-      <button @click="append('1')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">1</button>
-      <button @click="append('2')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">2</button>
-      <button @click="append('3')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">3</button>
-      <button @click="append('+')" class="py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-semibold">+</button>
-      <button @click="append('.')" class="py-2 bg-gray-100 rounded hover:bg-gray-200 font-semibold">.</button>
-      <button @click="calculate()" class="col-span-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 font-semibold">=</button>
+      <!-- Hero Image (Unsplash) -->
+      <div class="md:w-1/2 mt-6 md:mt-0">
+        <img
+          src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80"
+          alt="Dashboard preview on a laptop screen"
+          class="w-full rounded-lg shadow-lg"
+        >
       </div>
     </div>
-  </body>
+  </section>
+
+  <!-- Features Section -->
+  <section class="bg-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Our Features</h2>
+      <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        <div class="bg-gray-50 p-6 rounded-lg shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-2 text-blue-600">Feature One</h3>
+          <p class="text-gray-600">Description of the first feature, highlighting its benefits.</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-lg shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-2 text-blue-600">Feature Two</h3>
+          <p class="text-gray-600">Description of the second feature with some details.</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-lg shadow hover:shadow-lg transition">
+          <h3 class="text-xl font-semibold mb-2 text-blue-600">Feature Three</h3>
+          <p class="text-gray-600">Description of the third feature and why it stands out.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-gray-300">
+    <div class="max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row justify-between">
+      <!-- Contact Info -->
+      <div class="mb-4 md:mb-0">
+        <h4 class="font-bold mb-2 text-white">Contact Us</h4>
+        <p>Email:
+          <a href="mailto:hello@example.com"
+            class="text-blue-400 hover:underline">hello@example.com</a></p>
+        <p>Phone: (123) 456-7890</p>
+      </div>
+      <!-- Social Links -->
+      <div>
+        <h4 class="font-bold mb-2 text-white">Follow Us</h4>
+        <div class="flex space-x-4">
+          <a href="#" class="text-gray-300 hover:text-white">Facebook</a>
+          <a href="#" class="text-gray-300 hover:text-white">Twitter</a>
+          <a href="#" class="text-gray-300 hover:text-white">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-gray-500 text-sm py-4 border-t border-gray-700">
+      &copy; 2025 Company Name. All rights reserved.
+    </div>
+  </footer>
+
+</body>
 </html>
