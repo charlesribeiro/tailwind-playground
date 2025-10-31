@@ -1,12 +1,38 @@
 {
-
-   "scripts": {
-   "dev": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch",
-   "build": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css"
- },
-
+  "name": "tailwind-playground",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch",
+    "build": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.14",
     "tailwindcss": "^4.1.14"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/dom": "^9.3.4",
+    "jsdom": "^23.0.1"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/src/setupTests.js"],
+    "testMatch": ["**/__tests__/**/*.test.js", "**/?(*.)+(spec|test).js"],
+    "testPathIgnorePatterns": ["**/test-utils.js"],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/setupTests.js"
+    ],
+    "coverageReporters": ["text", "lcov", "html"],
+    "transform": {},
+    "moduleFileExtensions": ["js", "json"],
+    "testEnvironmentOptions": {
+      "url": "http://localhost"
+    }
   }
 }
