@@ -1,0 +1,6 @@
+.cursorrules:
+- Always write code in TypeScript.
+- For styling, exclusively use TailwindCSS utility classes.
+- Adhere to the color palette and spacing scale defined in `tailwind.config.js`.
+- All React components should be functional components with hooks (no classes).
+- Ensure all interactive elements are accessible (ARIA attributes as needed).
